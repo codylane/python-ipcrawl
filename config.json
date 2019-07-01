@@ -1,0 +1,37 @@
+{
+
+  "geolite_data": {
+
+    "asn": {
+      "whitelist": [
+        "COPYRIGHT.txt",
+        "GeoLite2-ASN-Blocks-IPv4.csv",
+        "LICENSE.txt"
+      ]
+
+    },
+
+    "city": {
+      "whitelist": [
+        "COPYRIGHT.txt",
+        "GeoLite2-City-Blocks-IPv4.csv",
+        "GeoLite2-City-Locations-en.csv",
+        "LICENSE.txt",
+        "README.txt"
+      ]
+
+    },
+
+    "country": {
+      "whitelist": [
+        "COPYRIGHT.txt",
+        "GeoLite2-Country-Blocks-IPv4.csv",
+        "GeoLite2-Country-Locations-en.csv",
+        "LICENSE.txt",
+        "README.txt"
+      ]
+    }
+
+  }
+
+}

@@ -1,0 +1,16 @@
+## files
+
+.DS_Store
+*.csv
+*.tar.gz
+*.sqlite3
+.*.lcts
+*.pyc
+.coverage
+
+## directories
+.tox/
+__pycache__
+*.egg-info
+docs/build/
+tmp/

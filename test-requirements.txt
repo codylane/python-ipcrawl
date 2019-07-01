@@ -1,0 +1,10 @@
+# test requirments
+-r requirements.txt
+bandit
+coverage
+hacking
+ipython
+invoke
+mock
+pytest
+tox
