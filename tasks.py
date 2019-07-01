@@ -477,12 +477,15 @@ def download_geolite_city_db(c, cleanup=True):
     """
     with c.cd(PROJECT_ROOT_DIR):
         filename = 'GeoLite2-City-CSV.zip'
+        md5_filename = '{filename}.md5'.format(filename=filename)
+
         city_csv_url = urlparse.urljoin(GEOLITE_BASE_URI, filename)
+        city_csv_url_md5 = urlparse.urljoin(GEOLITE_BASE_URI, md5_filename)
 
         get_request(city_csv_url, save_as=filename, stream=True)
+        get_request(city_csv_url_md5, save_as=md5_filename, stream=True)
 
-        expected_md5 = '{filename}.md5'.format(filename=filename)
-        validate_md5_checksum(filename, expected_md5)
+        validate_md5_checksum(filename, md5_filename)
 
         unzip_file(filename, os.path.join('data', 'geolite2'))
 
@@ -508,12 +511,15 @@ def download_geolite_asn_db(c, cleanup=True):
     """
     with c.cd(PROJECT_ROOT_DIR):
         filename = 'GeoLite2-ASN-CSV.zip'
+        md5_filename = '{filename}.md5'.format(filename=filename)
+
         asn_csv_url = urlparse.urljoin(GEOLITE_BASE_URI, filename)
+        asn_csv_url_md5 = urlparse.urljoin(GEOLITE_BASE_URI, md5_filename)
 
         get_request(asn_csv_url, save_as=filename, stream=True)
+        get_request(asn_csv_url_md5, save_as=md5_filename, stream=True)
 
-        expected_md5 = '{filename}.md5'.format(filename=filename)
-        validate_md5_checksum(filename, expected_md5)
+        validate_md5_checksum(filename, md5_filename)
 
         unzip_file(filename, os.path.join('data', 'geolite2'))
 
@@ -539,12 +545,15 @@ def download_geolite_country_db(c, cleanup=True):
     """
     with c.cd(PROJECT_ROOT_DIR):
         filename = 'GeoLite2-Country-CSV.zip'
+        md5_filename = '{filename}.md5'.format(filename=filename)
+
         country_csv_url = urlparse.urljoin(GEOLITE_BASE_URI, filename)
+        country_csv_url_md5 = urlparse.urljoin(GEOLITE_BASE_URI, md5_filename)
 
         get_request(country_csv_url, save_as=filename, stream=True)
+        get_request(country_csv_url_md5, save_as=md5_filename, stream=True)
 
-        expected_md5 = '{filename}.md5'.format(filename=filename)
-        validate_md5_checksum(filename, expected_md5)
+        validate_md5_checksum(filename, md5_filename)
 
         unzip_file(filename, os.path.join('data', 'geolite2'))
 

@@ -5,19 +5,18 @@ BIN_DIR="${CMD%/*}"
 cd ${BIN_DIR}
 BIN_DIR="${PWD}"
 
-[ -f /usr/local/miniconda3/etc/profile.d/conda.sh ] && . /usr/local/miniconda3/etc/profile.d/conda.sh
-[ -f /etc/profile.d/miniconda.sh ] && . /etc/profile.d/miniconda.sh
+MINICONDA_INSTALL_DIR="${HOME}/miniconda"
 
 export USER_UID=$(id -u $USER)
 export USER_GID=$(id -g $USER)
 
-PROJNAME="ipcrawl"
+PROJNAME="${BIN_DIR##*/}"
 
 CONDA_ENV_PYTHON36="3.6"
-CONDA_ENV_NAME36="${BIN_DIR##*/}-${CONDA_ENV_PYTHON36}"
+CONDA_ENV_NAME36="${PROJNAME}-${CONDA_ENV_PYTHON36}"
 
 CONDA_ENV_PYTHON="3.7"
-CONDA_ENV_NAME="${BIN_DIR##*/}-${CONDA_ENV_PYTHON}"
+CONDA_ENV_NAME="${PROJNAME}-${CONDA_ENV_PYTHON}"
 
 OS_TYPE="${OS_TYPE:-}"
 
@@ -46,11 +45,13 @@ get_os_type() {
 
     Darwin)
       OS_TYPE="osx"
+      OS_ARCH="$(uname -m)"
       return 0
     ;;
 
     Linux)
       OS_TYPE="linux"
+      OS_ARCH="$(uname -m)"
       return 0
     ;;
 
@@ -64,6 +65,30 @@ get_os_type() {
 
 has_conda_env() {
   conda list -n "${1}" 2>&1 >>/dev/null 2>&1
+}
+
+install_miniconda_linux64() {
+
+  local MINICONDA_INSTALLER="Miniconda3-latest-Linux-x86_64.sh"
+  local MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+
+  curl -LO ${MINICONDA_URL}
+  chmod 755 ${MINICONDA_INSTALLER}
+
+  ./${MINICONDA_INSTALLER} -b -p ${MINICONDA_INSTALL_DIR}
+
+}
+
+install_miniconda_osx64() {
+
+  local MINICONDA_INSTALLER="Miniconda3-latest-MacOSX-x86_64.sh"
+  local MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
+
+  curl -LO ${MINICONDA_URL}
+  chmod 755 ${MINICONDA_INSTALLER}
+
+  ./${MINICONDA_INSTALLER} -b -p ${MINICONDA_INSTALL_DIR}
+
 }
 
 err() {
@@ -256,11 +281,37 @@ init-osx() {
 
   info "$YELLOWBOLD" "WARNING: there is no handler for osx yet"
 
+  case "${OS_ARCH}" in
+
+    x86_64)
+      command -v conda >>/dev/null || install_miniconda_osx64
+      ;;
+
+    *)
+      info "$REDBOLD" "WARNING: OS arch ${OS_ARCH} is not currently supported"
+      return 1
+      ;;
+
+  esac
+
 }
 
 init-linux() {
 
-  info "$YELLOWBOLD" "WARNING: there is no handler for linux yet"
+  info "$GREEN" "Initializing linux deps"
+
+  case "${OS_ARCH}" in
+
+    x86_64)
+      command -v conda >>/dev/null || install_miniconda_linux64
+      ;;
+
+    *)
+      info "$REDBOLD" "WARNING: OS arch ${OS_ARCH} is not currently supported"
+      return 1
+      ;;
+
+  esac
 
 }
 
@@ -301,7 +352,6 @@ create-conda-env() {
 
 ## main ##
 
-[ "$(command -v conda)" != "conda" ] && err "Please install conda or source the miniconda conda.sh file first"
 [ -z "${CONDA_ENV_NAME36}" ] && err "Please set CONDA_ENV_NAME36"
 [ -z "${CONDA_ENV_NAME}" ] && err "Please set CONDA_ENV_NAME"
 [ -z "${PROJNAME}" ] && err "please set PROJNAME"
@@ -316,6 +366,12 @@ info "$GREEN" "CONDA_ENV_PYTHON=$CONDA_ENV_PYTHON"
 get_os_type || err "The OS type $OS_TYPE is not supported for local development"
 
 eval "init-${OS_TYPE}"
+
+[ -f ${MINICONDA_INSTALL_DIR}/etc/profile.d/conda.sh ] && . ${MINICONDA_INSTALL_DIR}/etc/profile.d/conda.sh
+[ -f /usr/local/miniconda3/etc/profile.d/conda.sh ] && . /usr/local/miniconda3/etc/profile.d/conda.sh
+[ -f /etc/profile.d/miniconda.sh ] && . /etc/profile.d/miniconda.sh
+
+[ "$(command -v conda)" != "conda" ] && err "Please install conda or source the miniconda conda.sh file first"
 
 has_conda_env "${CONDA_ENV_NAME36}" || create-conda-env "${CONDA_ENV_NAME36}" "${CONDA_ENV_PYTHON36}"
 has_conda_env "${CONDA_ENV_NAME}" || create-conda-env "${CONDA_ENV_NAME}" "${CONDA_ENV_PYTHON}"

@@ -2,6 +2,7 @@
 
 .DS_Store
 *.csv
+*.md5
 *.tar.gz
 *.sqlite3
 .*.lcts
